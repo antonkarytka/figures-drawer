@@ -5,8 +5,10 @@ import java.util.Map;
 
 public class ShapeFactory {
 
-    private static final Map<String, Object> shapes = createMap();
-    private static Map<String, Object> createMap()
+    public ShapeFactory() {}
+
+    private final Map<String, Object> shapes = createMap();
+    private Map<String, Object> createMap()
     {
         Map<String, Object> shapes = new HashMap<String, Object>();
         shapes.put("Pencil", new Polyline());

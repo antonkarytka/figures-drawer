@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.layout.AnchorPane;
@@ -53,8 +54,16 @@ public class Controller implements Initializable {
         index = -1;
 
         drawingPanel.setOnMousePressed(event -> {
-            shapesList.get(index).borderColor = colorPicker.getValue();
-            shapesList.get(index).addPoint(new Point((int)event.getX(), (int)event.getY()));
+            try {
+                shapesList.get(index).borderColor = colorPicker.getValue();
+                shapesList.get(index).addPoint(new Point((int)event.getX(), (int)event.getY()));
+            } catch (IndexOutOfBoundsException e) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Ooops...");
+                alert.setHeaderText("Trying to draw a figure without choosing it");
+                alert.setContentText("You should choose a figure first!");
+                alert.show();
+            }
         });
 
         drawingPanel.setOnMouseDragged(event -> {
