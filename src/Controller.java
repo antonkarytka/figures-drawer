@@ -1,7 +1,4 @@
-import Shapes.Point;
-import Shapes.Shape;
-import Shapes.ShapeFactory;
-import com.sun.deploy.util.BlackList;
+import Shapes.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 
@@ -19,8 +17,9 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
-    public ArrayList<Shape> shapesList = new ArrayList<Shape>();
-    public int index;
+    private ArrayList<Shape> shapesList = new ArrayList<Shape>();
+    private int index;
+    private Rectangle selectionBorder;
 
     @FXML
     private Canvas canvasDraw;
@@ -28,6 +27,8 @@ public class Controller implements Initializable {
     private AnchorPane drawingPanel;
     @FXML
     private ColorPicker colorPicker;
+    @FXML
+    private MenuItem serialize;
 
     @FXML
     public void buttonClicked(ActionEvent event) {
@@ -40,6 +41,7 @@ public class Controller implements Initializable {
     @FXML
     public void clearDrawingPanel() {
         index = -1;
+        selectionBorder = null;
         shapesList.clear();
         final GraphicsContext gc = canvasDraw.getGraphicsContext2D();
         gc.clearRect(0, 0, 900, 550);
@@ -50,6 +52,10 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         colorPicker.setValue(Color.BLACK);
         final GraphicsContext gc = canvasDraw.getGraphicsContext2D();
+        final GraphicsContext gcBorder = canvasDraw.getGraphicsContext2D();
+        gcBorder.setStroke(Color.RED);
+        gcBorder.setLineWidth(2);
+
 
         index = -1;
 
@@ -69,8 +75,26 @@ public class Controller implements Initializable {
         drawingPanel.setOnMouseDragged(event -> {
             shapesList.get(index).refreshFigure(new Point((int)event.getX(), (int)event.getY()));
             gc.clearRect(0, 0, 900, 550);
-            for (Shape figure: shapesList) {
+            for (Shape figure : shapesList) {
                 figure.draw(gc);
+            }
+        });
+
+        drawingPanel.setOnMouseClicked(event -> {
+            selectionBorder = null;
+            for (Shape shape : shapesList) {
+                if (shape.contains(new Point((int)event.getX(), (int)event.getY()))) {
+                    if (shape instanceof Polygon) {
+                        selectionBorder = new Rectangle(new Point(shape.points.get(0).x - 5, shape.points.get(0).y - 5), Math.abs(shape.points.get(1).x - shape.points.get(0).x + 10), Math.abs(shape.points.get(2).y - shape.points.get(0).y + 10));
+                        selectionBorder.drawBorder(gcBorder);
+                    } else if (shape instanceof Polyline) {
+                        selectionBorder = new Rectangle(new Point(shape.points.get(0).x - 5, shape.points.get(0).y - 5), Math.abs(shape.points.get(shape.points.size() - 1).x - shape.points.get(0).x) + 10, Math.abs(shape.points.get(shape.points.size() - 1).y - shape.points.get(0).y) + 10);
+                        selectionBorder.drawBorder(gcBorder);
+                    } else if (shape instanceof Ellipse) {
+                        selectionBorder = new Rectangle(new Point(shape.points.get(0).x - 5, shape.points.get(0).y - 5), ((Ellipse) shape).width + 13, ((Ellipse) shape).height + 13);
+                        selectionBorder.drawBorder(gcBorder);
+                    }
+                }
             }
         });
     }

@@ -22,4 +22,5 @@ public class Triangle extends Polygon {
             addPoint(point);
         }
     }
+
 }

@@ -8,8 +8,7 @@ public class ShapeFactory {
     public ShapeFactory() {}
 
     private final Map<String, Object> shapes = createMap();
-    private Map<String, Object> createMap()
-    {
+    private Map<String, Object> createMap() {
         Map<String, Object> shapes = new HashMap<String, Object>();
         shapes.put("Pencil", new Polyline());
         shapes.put("Line", new Line());

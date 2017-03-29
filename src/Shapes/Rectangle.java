@@ -1,14 +1,23 @@
 package Shapes;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 public class Rectangle extends Polygon{
 
     public Rectangle() {}
 
-    public Rectangle (Point topLeft, Point bottomRight) {
+    public Rectangle (Point topLeft, int width, int height) {
         addPoint(topLeft);
-        addPoint(new Point(bottomRight.x, topLeft.y));
-        addPoint(bottomRight);
-        addPoint(new Point(topLeft.x, bottomRight.y));
+        addPoint(new Point(topLeft.x + width, topLeft.y));
+        addPoint(new Point(topLeft.x + width, topLeft.y + height));
+        addPoint(new Point(topLeft.x, topLeft.y + height));
+    }
+
+    public void drawBorder(GraphicsContext gc) {
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(1);
+        gc.strokePolygon(getXCoordinates(), getYCoordinates(), getAmountPoints());
     }
 
     @Override

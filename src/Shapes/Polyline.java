@@ -17,4 +17,13 @@ public class Polyline extends Shape {
     public void refreshFigure(Point point) {
         addPoint(point);
     }
+
+    @Override
+    public boolean contains(Point point) {
+        for (Point p : this.points) {
+            if ((p.x == point.x) && (p.y == point.y))
+                return true;
+        }
+        return false;
+    }
 }

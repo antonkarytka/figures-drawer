@@ -27,4 +27,5 @@ public class Square extends Polygon {
             addPoint(new Point(points.get(0).x, points.get(0).y + sideLength));
         }
     }
+
 }

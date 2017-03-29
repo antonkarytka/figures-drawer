@@ -16,4 +16,9 @@ public class Circle extends Ellipse {
         width = Math.abs(points.get(0).x - point.x);
         height = width;
     }
+
+    @Override
+    public boolean contains(Point point) {
+        return ((Math.pow((point.x - points.get(0).x), 2) + Math.pow((point.y - points.get(0).y), 2) < Math.pow(width, 2)));
+    }
 }

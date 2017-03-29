@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public abstract class Shape {
     public Color borderColor;
-    ArrayList<Point> points = new ArrayList<>();
+    public ArrayList<Point> points = new ArrayList<>();
 
-    public Shape() {}
+    Shape() {}
 
     public void addPoint(Point point) {
         points.add(point);
@@ -32,6 +32,8 @@ public abstract class Shape {
     int getAmountPoints() {
         return points.size();
     }
+
+    public abstract boolean contains(Point point);
 
     public abstract void draw(GraphicsContext gc);
 
