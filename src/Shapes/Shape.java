@@ -7,8 +7,9 @@ import java.util.ArrayList;
 
 public abstract class Shape {
 
-    public Color borderColor = Color.BLACK;
     ArrayList<Point> points = new ArrayList<>();
+    public Color borderColor;
+    public int lineWidth;
 
     Shape() {}
 

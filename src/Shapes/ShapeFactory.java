@@ -10,7 +10,7 @@ public class ShapeFactory {
     private final Map<String, Object> shapes = createMap();
     private Map<String, Object> createMap() {
         Map<String, Object> shapes = new HashMap<String, Object>();
-        shapes.put("Pencil", new Polyline());
+        shapes.put("Pencil", new Pencil());
         shapes.put("Line", new Line());
         shapes.put("Triangle", new Triangle());
         shapes.put("Square", new Square());

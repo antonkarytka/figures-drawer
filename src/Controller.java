@@ -4,12 +4,14 @@ import Shapes.Rectangle;
 import Shapes.Shape;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
@@ -31,9 +33,23 @@ public class Controller implements Initializable {
         return (shape instanceof Selectable);
     }
 
+    private boolean implementsEditable(Shape shape) {
+        return (shape instanceof Editable);
+    }
+
     private boolean isSelected(Shape shape, Point point) {
         Selectable selectableFigure = (Selectable)shape;
         return selectableFigure.contains(point);
+    }
+
+    private void setColor(Shape shape, Color color) {
+        Editable editedFigure = (Editable)shape;
+        editedFigure.setColor(color);
+    }
+
+    private void setLineWidth(Shape shape, int width) {
+        Editable editedFigure = (Editable)shape;
+        editedFigure.setLineWidth(width);
     }
 
     @FXML
@@ -41,11 +57,13 @@ public class Controller implements Initializable {
     @FXML
     private AnchorPane drawingPanel;
     @FXML
-    private ColorPicker colorPicker;
-    @FXML
     private MenuItem saveXML;
     @FXML
     private MenuItem openXML;
+    @FXML
+    private ColorPicker colorPicker;
+    @FXML
+    private ChoiceBox lineWidthChoice;
 
     @FXML
     public void buttonClicked(ActionEvent event) {
@@ -67,7 +85,7 @@ public class Controller implements Initializable {
     @FXML
     public void clearDrawingPanel() {
         drawingMode = true;
-        currentShape = new Polyline();
+        currentShape = new Pencil();
         shapesList.clear();
         final GraphicsContext gc = canvasDraw.getGraphicsContext2D();
         gc.clearRect(0, 0, 950, 655);
@@ -75,14 +93,24 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        currentShape = new Polyline();
+        currentShape = new Pencil();
         colorPicker.setValue(Color.BLACK);
+        lineWidthChoice.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
+        lineWidthChoice.setValue(5);
         final GraphicsContext gc = canvasDraw.getGraphicsContext2D();
         final GraphicsContext gcBorder = canvasDraw.getGraphicsContext2D();
 
         drawingPanel.setOnMousePressed(event -> {
             if (drawingMode) {
-                currentShape.borderColor = colorPicker.getValue();
+                if (implementsEditable(currentShape)) {
+                    setColor(currentShape, colorPicker.getValue());
+                    setLineWidth(currentShape, (int) lineWidthChoice.getValue());
+                } else {
+                    currentShape.borderColor = Color.BLACK;
+                    currentShape.lineWidth = 5;
+                    colorPicker.setValue(Color.BLACK);
+                    lineWidthChoice.setValue(5);
+                }
                 currentShape.addPoint(new Point((int)event.getX(), (int)event.getY()));
             }
         });
@@ -100,7 +128,7 @@ public class Controller implements Initializable {
 
         drawingPanel.setOnMouseReleased(event -> {
             shapesList.add(currentShape);
-            currentShape = new Polyline();
+            currentShape = new Pencil();
         });
 
         // ELLIPSE SELECTION STILL DOESN'T WORK
@@ -134,7 +162,7 @@ public class Controller implements Initializable {
 
             try {
                 XStream xstream = new XStream(new StaxDriver());
-                xstream.processAnnotations(new Class[] {XMLDeserializer.class, Polyline.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
+                xstream.processAnnotations(new Class[] {XMLDeserializer.class, Pencil.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
 
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(xstream.toXML(shapesList));
@@ -150,7 +178,7 @@ public class Controller implements Initializable {
             File file = fileChooser.showOpenDialog(null);
             if (file != null) {
                 XStream xstream = new XStream(new StaxDriver());
-                xstream.processAnnotations(new Class[] {XMLDeserializer.class, Polyline.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
+                xstream.processAnnotations(new Class[] {XMLDeserializer.class, Pencil.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
 
                 XMLDeserializer deserializer = (XMLDeserializer)xstream.fromXML(file);
                 shapesList.addAll(deserializer.deserializedFigures);

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -64,16 +63,16 @@
             </Label>
                   <Button layoutX="19.0" layoutY="48.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Pencil" />
                   <Button layoutX="19.0" layoutY="88.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Line" />
-                  <Button layoutX="19.0" layoutY="247.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Circle" />
-                  <Button layoutX="19.0" layoutY="287.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Ellipse" />
                   <Button layoutX="19.0" layoutY="128.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Triangle" />
                   <Button layoutX="19.0" layoutY="168.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Square" />
-                  <Button layoutX="19.0" layoutY="207.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Rectangle" />
-                  <Button layoutX="19.0" layoutY="452.0" mnemonicParsing="false" onAction="#setDrawMode" prefHeight="29.0" prefWidth="112.0" text="Draw" />
-                  <Button layoutX="19.0" layoutY="492.0" mnemonicParsing="false" onAction="#setSelectMode" prefHeight="29.0" prefWidth="112.0" text="Select" />
+                  <Button layoutX="19.0" layoutY="208.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Rectangle" />
+                  <Button layoutX="19.0" layoutY="248.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Circle" />
+                  <Button layoutX="19.0" layoutY="288.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Ellipse" />
+                  <Button layoutX="19.0" layoutY="467.0" mnemonicParsing="false" onAction="#setDrawMode" prefHeight="29.0" prefWidth="112.0" text="Draw" />
+                  <Button layoutX="19.0" layoutY="502.0" mnemonicParsing="false" onAction="#setSelectMode" prefHeight="29.0" prefWidth="112.0" text="Select" />
                   <Button layoutX="19.0" layoutY="553.0" mnemonicParsing="false" onAction="#clearDrawingPanel" prefHeight="29.0" prefWidth="112.0" text="Clear" />
-            <ColorPicker fx:id="colorPicker" layoutX="19.0" layoutY="367.0" prefHeight="29.0" prefWidth="112.0" />
-                  <Label alignment="CENTER" layoutX="45.0" layoutY="332.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Color" textAlignment="CENTER" wrapText="false">
+            <ColorPicker fx:id="colorPicker" layoutX="19.0" layoutY="349.0" prefHeight="29.0" prefWidth="112.0" />
+                  <Label alignment="CENTER" layoutX="45.0" layoutY="324.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Color" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x11" />
                      </font>
@@ -81,7 +80,7 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x21" />
                      </textFill>
                   </Label>
-                  <Label alignment="CENTER" layoutX="45.0" layoutY="416.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Mode" textAlignment="CENTER" wrapText="false">
+                  <Label alignment="CENTER" layoutX="45.0" layoutY="442.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Mode" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x12" />
                      </font>
@@ -89,6 +88,15 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x22" />
                      </textFill>
                   </Label>
+                  <Label alignment="CENTER" layoutX="34.0" layoutY="383.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Line width" textAlignment="CENTER" wrapText="false">
+                     <font>
+                        <Font size="18.0" fx:id="x111" />
+                     </font>
+                     <textFill>
+                        <Color blue="0.624" green="0.624" red="0.624" fx:id="x211" />
+                     </textFill>
+                  </Label>
+                  <ChoiceBox fx:id="lineWidthChoice" layoutX="19.0" layoutY="407.0" prefHeight="29.0" prefWidth="112.0" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">

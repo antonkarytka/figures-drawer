@@ -3,14 +3,25 @@ package Shapes;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 
-public class Polyline extends Shape {
 
-    public Polyline() {}
+public class Pencil extends Shape implements Editable {
+
+    public Pencil() {}
+
+    @Override
+    public void setColor(Color color) {
+        borderColor = color;
+    }
+
+    @Override
+    public void setLineWidth(int width) {
+        lineWidth = width;
+    }
 
     @Override
     public void draw(GraphicsContext gc) {
         gc.setStroke(borderColor);
-        gc.setLineWidth(5);
+        gc.setLineWidth(lineWidth);
         gc.strokePolyline(getXCoordinates(), getYCoordinates(), getAmountPoints());
     }
 

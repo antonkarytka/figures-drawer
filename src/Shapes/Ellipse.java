@@ -5,11 +5,11 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 @XStreamAlias("ellipse")
-public class Ellipse extends Shape implements Selectable {
+public class Ellipse extends Shape implements Editable, Selectable {
 
-    Point center;
-    int width;
-    int height;
+    private Point center;
+    private int width;
+    private int height;
 
     public Ellipse() {}
 
@@ -19,6 +19,16 @@ public class Ellipse extends Shape implements Selectable {
         this.height = height;
     }
 
+    @Override
+    public void setColor(Color color) {
+        borderColor = color;
+    }
+
+    @Override
+    public void setLineWidth(int width) {
+        lineWidth = width;
+    }
+
     public boolean contains(Point point) {
         return ((point.x * point.x) / (width * width) + ((point.y * point.x) / height * height)) <= 1;
     }
@@ -26,7 +36,7 @@ public class Ellipse extends Shape implements Selectable {
     @Override
     public void draw(GraphicsContext gc) {
         gc.setStroke(borderColor);
-        gc.setLineWidth(5);
+        gc.setLineWidth(lineWidth);
         center = points.get(0);
         gc.strokeOval(center.x, center.y, width, height);
     }
