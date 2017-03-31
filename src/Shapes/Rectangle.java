@@ -1,9 +1,9 @@
 package Shapes;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
-public class Rectangle extends Polygon{
+@XStreamAlias("rectangle")
+public class Rectangle extends Polygon implements Selectable {
 
     public Rectangle() {}
 
@@ -14,11 +14,6 @@ public class Rectangle extends Polygon{
         addPoint(new Point(topLeft.x, topLeft.y + height));
     }
 
-    public void drawBorder(GraphicsContext gc) {
-        gc.setStroke(Color.RED);
-        gc.setLineWidth(1);
-        gc.strokePolygon(getXCoordinates(), getYCoordinates(), getAmountPoints());
-    }
 
     @Override
     public void refreshFigure (Point point) {

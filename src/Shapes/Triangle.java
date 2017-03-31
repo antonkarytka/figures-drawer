@@ -1,6 +1,9 @@
 package Shapes;
 
-public class Triangle extends Polygon {
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("triangle")
+public class Triangle extends Polygon implements Selectable {
 
     public Triangle() {}
 

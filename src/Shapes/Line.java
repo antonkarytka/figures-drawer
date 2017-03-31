@@ -1,5 +1,8 @@
 package Shapes;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("line")
 public class Line extends Polyline {
 
     public Line() {}

@@ -1,6 +1,7 @@
 package Shapes;
 
 import javafx.scene.canvas.*;
+import javafx.scene.paint.Color;
 
 public class Polyline extends Shape {
 
@@ -14,16 +15,14 @@ public class Polyline extends Shape {
     }
 
     @Override
-    public void refreshFigure(Point point) {
-        addPoint(point);
+    public void drawBorder(GraphicsContext gc) {
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(3);
+        gc.strokePolyline(getXCoordinates(), getYCoordinates(), getAmountPoints());
     }
 
     @Override
-    public boolean contains(Point point) {
-        for (Point p : this.points) {
-            if ((p.x == point.x) && (p.y == point.y))
-                return true;
-        }
-        return false;
+    public void refreshFigure(Point point) {
+        addPoint(point);
     }
 }

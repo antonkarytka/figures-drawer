@@ -6,8 +6,9 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
 public abstract class Shape {
-    public Color borderColor;
-    public ArrayList<Point> points = new ArrayList<>();
+
+    public Color borderColor = Color.BLACK;
+    ArrayList<Point> points = new ArrayList<>();
 
     Shape() {}
 
@@ -33,9 +34,11 @@ public abstract class Shape {
         return points.size();
     }
 
-    public abstract boolean contains(Point point);
-
     public abstract void draw(GraphicsContext gc);
 
+    public abstract void drawBorder(GraphicsContext gc);
+
     public abstract void refreshFigure(Point point);
+
+
 }

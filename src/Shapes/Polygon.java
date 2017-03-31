@@ -3,17 +3,12 @@ package Shapes;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class Polygon extends Shape {
 
     Polygon() {}
 
-    public void drawBorder(GraphicsContext gc) {
-        gc.setStroke(Color.RED);
-        gc.setLineWidth(1);
-        gc.strokePolygon(getXCoordinates(), getYCoordinates(), getAmountPoints());
-    }
-
-    @Override
     public boolean contains(Point point) {
         int i;
         int j;
@@ -35,8 +30,13 @@ public class Polygon extends Shape {
     }
 
     @Override
+    public void drawBorder(GraphicsContext gc) {
+        gc.setStroke(Color.RED);
+        gc.setLineWidth(3);
+        gc.strokePolygon(getXCoordinates(), getYCoordinates(), getAmountPoints());
+    }
+    @Override
     public void refreshFigure(Point point) {
         addPoint(point);
     }
-
 }

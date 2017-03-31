@@ -1,6 +1,9 @@
 package Shapes;
 
-public class Square extends Polygon {
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("square")
+public class Square extends Polygon implements Selectable {
 
     public Square() {}
 

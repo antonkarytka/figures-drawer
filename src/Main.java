@@ -7,10 +7,10 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
         primaryStage.setTitle("Figures Drawer");
-        primaryStage.setScene(new Scene(root, 900, 550));
+        primaryStage.setScene(new Scene(root, 950, 655));
         primaryStage.show();
     }
 
