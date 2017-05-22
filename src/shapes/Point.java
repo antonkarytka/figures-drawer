@@ -1,8 +1,8 @@
-package Shapes;
+package shapes;
 
 public class Point {
 
-    int x, y;
+    public int x, y;
 
     public Point() {}
 

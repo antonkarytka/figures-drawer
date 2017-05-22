@@ -1,5 +1,7 @@
-package Shapes;
+package shapes;
 
+import asbtract.Shape;
+import interfaces.Editable;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 

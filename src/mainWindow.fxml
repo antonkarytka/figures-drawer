@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.canvas.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -13,45 +14,25 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-              <MenuItem mnemonicParsing="false" text="Open…" />
-              <MenuItem fx:id="openXML" mnemonicParsing="false" text="Open XML…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
+            <MenuItem fx:id="openXML" mnemonicParsing="false" text="Open XML…" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
             <MenuItem fx:id="saveXML" mnemonicParsing="false" text="Save as XML..." />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
+            <MenuItem fx:id="quit" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About ObjectsDrawer \d" />
+             <MenuItem fx:id="howToAddOwnFigures" mnemonicParsing="false" text="Own figures" />
+             <SeparatorMenuItem mnemonicParsing="false" />
+             <MenuItem fx:id="about" mnemonicParsing="false" text="About Figures Drawer" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
     <SplitPane dividerPositions="0.2505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane maxWidth="-Infinity" prefHeight="547.0" prefWidth="150.0">
+        <AnchorPane fx:id="toolbar" maxWidth="-Infinity" prefHeight="547.0" prefWidth="150.0">
           <children>
             <Label alignment="CENTER" layoutX="45.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Figures" textAlignment="CENTER" wrapText="false">
               <font>
@@ -61,18 +42,12 @@
                 <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <Button layoutX="19.0" layoutY="48.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Pencil" />
-                  <Button layoutX="19.0" layoutY="88.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Line" />
-                  <Button layoutX="19.0" layoutY="128.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Triangle" />
-                  <Button layoutX="19.0" layoutY="168.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Square" />
-                  <Button layoutX="19.0" layoutY="208.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Rectangle" />
-                  <Button layoutX="19.0" layoutY="248.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Circle" />
-                  <Button layoutX="19.0" layoutY="288.0" mnemonicParsing="false" onAction="#buttonClicked" prefHeight="29.0" prefWidth="112.0" text="Ellipse" />
-                  <Button layoutX="19.0" layoutY="467.0" mnemonicParsing="false" onAction="#setDrawMode" prefHeight="29.0" prefWidth="112.0" text="Draw" />
-                  <Button layoutX="19.0" layoutY="502.0" mnemonicParsing="false" onAction="#setSelectMode" prefHeight="29.0" prefWidth="112.0" text="Select" />
-                  <Button layoutX="19.0" layoutY="553.0" mnemonicParsing="false" onAction="#clearDrawingPanel" prefHeight="29.0" prefWidth="112.0" text="Clear" />
-            <ColorPicker fx:id="colorPicker" layoutX="19.0" layoutY="349.0" prefHeight="29.0" prefWidth="112.0" />
-                  <Label alignment="CENTER" layoutX="45.0" layoutY="324.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Color" textAlignment="CENTER" wrapText="false">
+              <ChoiceBox fx:id="figureChoiceBox" layoutX="19.0" layoutY="47.0" prefHeight="29.0" prefWidth="112.0" />
+              <Button layoutX="19.0" layoutY="294.0" mnemonicParsing="false" onAction="#setDrawMode" prefHeight="29.0" prefWidth="112.0" text="Draw" />
+              <Button layoutX="19.0" layoutY="337.0" mnemonicParsing="false" onAction="#setSelectMode" prefHeight="29.0" prefWidth="112.0" text="Select" />
+              <Button layoutX="19.0" layoutY="546.0" mnemonicParsing="false" onAction="#clearDrawingPanel" prefHeight="29.0" prefWidth="112.0" text="Clear" />
+            <ColorPicker fx:id="colorPicker" layoutX="19.0" layoutY="128.0" prefHeight="29.0" prefWidth="112.0" />
+                  <Label alignment="CENTER" layoutX="45.0" layoutY="97.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Color" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x11" />
                      </font>
@@ -80,7 +55,7 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x21" />
                      </textFill>
                   </Label>
-                  <Label alignment="CENTER" layoutX="45.0" layoutY="442.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Mode" textAlignment="CENTER" wrapText="false">
+                  <Label alignment="CENTER" layoutX="45.0" layoutY="261.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Mode" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x12" />
                      </font>
@@ -88,7 +63,7 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x22" />
                      </textFill>
                   </Label>
-                  <Label alignment="CENTER" layoutX="34.0" layoutY="383.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Line width" textAlignment="CENTER" wrapText="false">
+                  <Label alignment="CENTER" layoutX="34.0" layoutY="180.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Line width" textAlignment="CENTER" wrapText="false">
                      <font>
                         <Font size="18.0" fx:id="x111" />
                      </font>
@@ -96,7 +71,7 @@
                         <Color blue="0.624" green="0.624" red="0.624" fx:id="x211" />
                      </textFill>
                   </Label>
-                  <ChoiceBox fx:id="lineWidthChoice" layoutX="19.0" layoutY="407.0" prefHeight="29.0" prefWidth="112.0" />
+                  <ChoiceBox fx:id="lineWidthChoice" layoutX="19.0" layoutY="212.0" prefHeight="29.0" prefWidth="112.0" />
           </children>
         </AnchorPane>
         <ScrollPane prefHeight="-1.0" prefWidth="-1.0">

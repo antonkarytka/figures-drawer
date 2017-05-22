@@ -1,4 +1,4 @@
-package Shapes;
+package interfaces;
 
 import javafx.scene.paint.Color;
 

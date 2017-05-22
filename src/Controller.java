@@ -1,19 +1,18 @@
-import Shapes.*;
-import Shapes.Point;
-import Shapes.Rectangle;
-import Shapes.Shape;
+import asbtract.Shape;
+import interfaces.Editable;
+import interfaces.Selectable;
+import secondary.XMLDeserializer;
+import shapes.*;
+import shapes.Point;
+import shapes.Rectangle;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -21,6 +20,7 @@ import javafx.stage.FileChooser;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -53,6 +53,8 @@ public class Controller implements Initializable {
     }
 
     @FXML
+    private ChoiceBox<String> figureChoiceBox;
+    @FXML
     private Canvas canvasDraw;
     @FXML
     private AnchorPane drawingPanel;
@@ -61,16 +63,15 @@ public class Controller implements Initializable {
     @FXML
     private MenuItem openXML;
     @FXML
+    private MenuItem quit;
+    @FXML
+    private MenuItem howToAddOwnFigures;
+    @FXML
+    private MenuItem about;
+    @FXML
     private ColorPicker colorPicker;
     @FXML
-    private ChoiceBox lineWidthChoice;
-
-    @FXML
-    public void buttonClicked(ActionEvent event) {
-        Button button = (Button) event.getSource();
-        ShapeFactory shapeFactory = new ShapeFactory();
-        currentShape = shapeFactory.getShape(button.getText());
-    }
+    private ChoiceBox<Integer> lineWidthChoice;
 
     @FXML
     public void setDrawMode() {
@@ -93,6 +94,41 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        String modulesPath = "/path/to/out/figures/folder/";
+        ModuleLoader loader = new ModuleLoader(modulesPath, "shapes", ClassLoader.getSystemClassLoader());
+        List<String> modules = new ArrayList<String>();
+        File[] files = new File(modulesPath).listFiles();
+        if (files != null) {
+            for (File file: files) {
+                if (file.isFile()) {
+                    modules.add(file.getName().split(".class")[0]);
+                }
+            }
+        }
+
+        for (String module: modules) {
+            try {
+                loader.loadClass(module);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        figureChoiceBox.setItems(FXCollections.observableArrayList(modules));
+        if (modules.size() > 0) {
+            figureChoiceBox.setValue(modules.get(0));
+        } else {
+            figureChoiceBox.setValue("None");
+        }
+        figureChoiceBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                Class cl = Class.forName("shapes." + newValue);
+                currentShape = (Shape) cl.newInstance();
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+                e.printStackTrace();
+            }
+        });
+
         currentShape = new Pencil();
         colorPicker.setValue(Color.BLACK);
         lineWidthChoice.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
@@ -104,14 +140,14 @@ public class Controller implements Initializable {
             if (drawingMode) {
                 if (implementsEditable(currentShape)) {
                     setColor(currentShape, colorPicker.getValue());
-                    setLineWidth(currentShape, (int) lineWidthChoice.getValue());
+                    setLineWidth(currentShape, lineWidthChoice.getValue());
                 } else {
                     currentShape.borderColor = Color.BLACK;
                     currentShape.lineWidth = 5;
                     colorPicker.setValue(Color.BLACK);
                     lineWidthChoice.setValue(5);
                 }
-                currentShape.addPoint(new Point((int)event.getX(), (int)event.getY()));
+                currentShape.addPoint(new Point((int) event.getX(), (int) event.getY()));
             }
         });
 
@@ -121,7 +157,7 @@ public class Controller implements Initializable {
                 for (Shape figure : shapesList) {
                     figure.draw(gc);
                 }
-                currentShape.refreshFigure(new Point((int)event.getX(), (int)event.getY()));
+                currentShape.refreshFigure(new Point((int) event.getX(), (int) event.getY()));
                 currentShape.draw(gc);
             }
         });
@@ -131,19 +167,15 @@ public class Controller implements Initializable {
             currentShape = new Pencil();
         });
 
-        // ELLIPSE SELECTION STILL DOESN'T WORK
-
         drawingPanel.setOnMouseClicked(event -> {
             if (!drawingMode) {
                 for (Shape shape : shapesList) {
                     if (implementsSelectable(shape)) {
-                        if (isSelected(shape, new Point((int)event.getX(), (int)event.getY()))) {
+                        if (isSelected(shape, new Point((int) event.getX(), (int) event.getY()))) {
                             gc.clearRect(0, 0, 950, 655);
                             for (Shape figure : shapesList) {
                                 figure.draw(gc);
                             }
-                            currentShape.refreshFigure(new Point((int)event.getX(), (int)event.getY()));
-                            currentShape.draw(gc);
                             shape.drawBorder(gcBorder);
                         }
                     }
@@ -162,7 +194,7 @@ public class Controller implements Initializable {
 
             try {
                 XStream xstream = new XStream(new StaxDriver());
-                xstream.processAnnotations(new Class[] {XMLDeserializer.class, Pencil.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
+                xstream.processAnnotations(new Class[]{XMLDeserializer.class, Pencil.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
 
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(xstream.toXML(shapesList));
@@ -178,15 +210,41 @@ public class Controller implements Initializable {
             File file = fileChooser.showOpenDialog(null);
             if (file != null) {
                 XStream xstream = new XStream(new StaxDriver());
-                xstream.processAnnotations(new Class[] {XMLDeserializer.class, Pencil.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
-
-                XMLDeserializer deserializer = (XMLDeserializer)xstream.fromXML(file);
-                shapesList.addAll(deserializer.deserializedFigures);
-
-                for (Shape shape : shapesList) {
-                    shape.draw(gc);
+                xstream.processAnnotations(new Class[]{XMLDeserializer.class, Pencil.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
+                try {
+                    XMLDeserializer deserializer = (XMLDeserializer) xstream.fromXML(file);
+                    shapesList.addAll(deserializer.deserializedFigures);
+                    for (Shape shape : shapesList) {
+                        shape.draw(gc);
+                    }
+                } catch (Exception e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Oops...");
+                    alert.setHeaderText("Opened XML file is corrupted!");
+                    alert.setContentText("Error occurred while opening XML file. Probably it has been corrupted.");
+                    alert.show();
                 }
             }
+        });
+
+        quit.setOnAction(event -> {
+            System.exit(0);
+        });
+
+        howToAddOwnFigures.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Own figures");
+            alert.setHeaderText("How to add your own figures?");
+            alert.setContentText("1.Write your figure's java class.\n2. Compile it.\n3. Put the compiled class into the following directory:\n  '/out/production/figures-drawer/shapes'");
+            alert.show();
+        });
+
+        about.setOnAction(event -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Figures Drawer");
+            alert.setHeaderText("What is it?");
+            alert.setContentText("Figures Drawer is a program for drawing pictures.\nYou can save them in XML for further usage and\nyou can also add your own figures!");
+            alert.show();
         });
     }
 }

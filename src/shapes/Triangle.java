@@ -1,6 +1,9 @@
-package Shapes;
+package shapes;
 
+import asbtract.Shape;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import interfaces.Editable;
+import interfaces.Selectable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 

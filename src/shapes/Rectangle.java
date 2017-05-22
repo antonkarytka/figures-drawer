@@ -1,19 +1,22 @@
-package Shapes;
+package shapes;
 
+import asbtract.Shape;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import interfaces.Editable;
+import interfaces.Selectable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-@XStreamAlias("square")
-public class Square extends Shape implements Editable, Selectable {
+@XStreamAlias("rectangle")
+public class Rectangle extends Shape implements Editable, Selectable {
 
-    public Square() {}
+    public Rectangle() {}
 
-    public Square(Point topLeft, int sideLength) {
+    public Rectangle (Point topLeft, int width, int height) {
         addPoint(topLeft);
-        addPoint(new Point(topLeft.x + sideLength, topLeft.y));
-        addPoint(new Point(topLeft.x + sideLength, topLeft.y + sideLength));
-        addPoint(new Point(topLeft.x, topLeft.y + sideLength));
+        addPoint(new Point(topLeft.x + width, topLeft.y));
+        addPoint(new Point(topLeft.x + width, topLeft.y + height));
+        addPoint(new Point(topLeft.x, topLeft.y + height));
     }
 
     @Override
@@ -53,21 +56,20 @@ public class Square extends Shape implements Editable, Selectable {
         gc.setLineWidth(3);
         gc.strokePolygon(getXCoordinates(), getYCoordinates(), getAmountPoints());
     }
+
     @Override
-    public void refreshFigure(Point point) {
-        int sideLength = point.x - points.get(0).x;
+    public void refreshFigure (Point point) {
         if (points.size() == 1) {
-            addPoint(new Point(points.get(0).x + sideLength, points.get(0).y));
-            addPoint(new Point(points.get(0).x + sideLength, points.get(0).y + sideLength));
-            addPoint(new Point(points.get(0).x, points.get(0).y + sideLength));
+            addPoint(new Point(point.x, points.get(0).y));
+            addPoint(point);
+            addPoint(new Point(points.get(0).x, point.y));
         } else {
             points.remove(3);
             points.remove(2);
             points.remove(1);
-            addPoint(new Point(points.get(0).x + sideLength, points.get(0).y));
-            addPoint(new Point(points.get(0).x + sideLength, points.get(0).y + sideLength));
-            addPoint(new Point(points.get(0).x, points.get(0).y + sideLength));
+            addPoint(new Point(point.x, points.get(0).y));
+            addPoint(point);
+            addPoint(new Point(points.get(0).x, point.y));
         }
     }
-
 }

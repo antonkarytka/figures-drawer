@@ -1,20 +1,25 @@
-package Shapes;
+package shapes;
 
+import asbtract.Shape;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import interfaces.Editable;
+import interfaces.Selectable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-@XStreamAlias("circle")
-public class Circle extends Shape implements Editable, Selectable {
+@XStreamAlias("ellipse")
+public class Ellipse extends Shape implements Editable, Selectable {
 
     private Point center;
     private int width;
+    private int height;
 
-    public Circle() {}
+    public Ellipse() {}
 
-    public Circle(Point center, int radius) {
+    public Ellipse(Point center, int width, int height) {
         this.center = center;
-        this.width = radius;
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -27,9 +32,8 @@ public class Circle extends Shape implements Editable, Selectable {
         lineWidth = width;
     }
 
-    @Override
     public boolean contains(Point point) {
-        return ((Math.pow((point.x - points.get(0).x), 2) + Math.pow((point.y - points.get(0).y), 2) < Math.pow(width, 2)));
+        return ((point.x * point.x) / (width * width) + ((point.y * point.x) / height * height)) <= 1;
     }
 
     @Override
@@ -37,7 +41,7 @@ public class Circle extends Shape implements Editable, Selectable {
         gc.setStroke(borderColor);
         gc.setLineWidth(lineWidth);
         center = points.get(0);
-        gc.strokeOval(center.x, center.y, width, width);
+        gc.strokeOval(center.x, center.y, width, height);
     }
 
     @Override
@@ -45,12 +49,13 @@ public class Circle extends Shape implements Editable, Selectable {
         gc.setStroke(Color.RED);
         gc.setLineWidth(3);
         center = points.get(0);
-        gc.strokeOval(center.x, center.y, width, width);
+        gc.strokeOval(center.x, center.y, width, height);
     }
 
     @Override
     public void refreshFigure(Point point) {
         center = points.get(0);
-        width = Math.abs(points.get(0).x - point.x);
+        width = 2 * Math.abs(points.get(0).x - point.x);
+        height = 2 * Math.abs(points.get(0).y - point.y);
     }
 }

@@ -1,17 +1,29 @@
-package Shapes;
+package shapes;
 
+import asbtract.Shape;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
+import interfaces.Editable;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 @XStreamAlias("line")
-public class Line extends Shape {
+public class Line extends Shape implements Editable {
 
     public Line() {}
 
     public Line(Point startPoint, Point endPoint) {
         addPoint(startPoint);
         addPoint(endPoint);
+    }
+
+    @Override
+    public void setColor(Color color) {
+        borderColor = color;
+    }
+
+    @Override
+    public void setLineWidth(int width) {
+        lineWidth = width;
     }
 
     @Override
