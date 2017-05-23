@@ -21,7 +21,11 @@ public class ModuleLoader extends ClassLoader {
             byte bytes[] = fetchClass(pathToModules + className + ".class");
             if (checkSignature(pathToModules + className + ".class", pathToModules + "sig" + className))
             {
-                return defineClass(packageName + '.' + className, bytes, 0, bytes.length);
+                if (bytes != null) {
+                    return defineClass(packageName + '.' + className, bytes, 0, bytes.length);
+                } else {
+                    return null;
+                }
             } else {
                 return null;
             }
