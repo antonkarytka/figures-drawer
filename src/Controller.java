@@ -27,7 +27,7 @@ import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
 
-    private ArrayList<Shape> shapesList = new ArrayList<Shape>();
+    private ArrayList<Shape> shapesList = new ArrayList<>();
     private boolean drawingMode = true;
     private Shape currentShape;
 
@@ -97,9 +97,9 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String modulesPath = "/home/anton/Programming/figures-drawer/out/production/figures-drawer/shapes/";
+        String modulesPath = "./out/production/figures-drawer/shapes/";
         ModuleLoader loader = new ModuleLoader(modulesPath, "shapes", ClassLoader.getSystemClassLoader());
-        List<String> modules = new ArrayList<String>();
+        List<String> modules = new ArrayList<>();
         File[] files = new File(modulesPath).listFiles();
         if (files != null) {
             for (File file: files) {
@@ -123,13 +123,13 @@ public class Controller implements Initializable {
                             validModules.add(module);
                         }
                     } catch (Exception e) {
-                        System.out.println(module + " class is corrupted.");
+                        System.out.println("Unable to load class: " + module);
                     }
                 }
             } catch (Error err) {
-                System.out.println(module + " class is corrupted.");
+                System.out.println("Class is corrupted: " + module);
             } catch (ClassNotFoundException e) {
-                System.out.println(module + " class was not found.");
+                System.out.println("Class was not found: " + module);
             }
         }
 
@@ -269,16 +269,14 @@ public class Controller implements Initializable {
                 } catch (StreamException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Oops...");
-                    alert.setHeaderText("Opened XML file is corrupted!");
+                    alert.setHeaderText("Opened XML file is corrupted");
                     alert.setContentText("Error occurred while opening XML file.\nProbably, it has been corrupted.");
                     alert.show();
                 }
             }
         });
 
-        quit.setOnAction(event -> {
-            System.exit(0);
-        });
+        quit.setOnAction(event -> System.exit(0));
 
         howToAddOwnFigures.setOnAction(event -> {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);

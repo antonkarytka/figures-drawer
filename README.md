@@ -8,4 +8,4 @@ Figures Drawer is an app for drawing simple pictures.
 * Save the whole picture in XML for further use in Figures Drawer.
 * Create your own figures.
 
-##### Figures Drawer uses encryption.
+### Figures Drawer uses encryption.
