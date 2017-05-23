@@ -4,9 +4,7 @@ import com.thoughtworks.xstream.io.StreamException;
 import interfaces.Editable;
 import interfaces.Selectable;
 import secondary.XMLDeserializer;
-import shapes.*;
 import shapes.Point;
-import shapes.Rectangle;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import javafx.collections.FXCollections;
@@ -24,7 +22,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -55,14 +52,6 @@ public class Controller implements Initializable {
     private void setLineWidth(Shape shape, int width) {
         Editable editedFigure = (Editable)shape;
         editedFigure.setLineWidth(width);
-    }
-
-    private static Class[] pushClass(Class[] array, Class push) {
-        Class[] longer = new Class[array.length + 1];
-        for (int i = 0; i < array.length; i++)
-            longer[i] = array[i];
-        longer[array.length] = push;
-        return longer;
     }
 
     @FXML
@@ -97,9 +86,10 @@ public class Controller implements Initializable {
     }
 
     @FXML
-    public void clearDrawingPanel() {
+    public void clearDrawingPanel() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         drawingMode = true;
-        currentShape = new Pencil();
+        Class cl = Class.forName("shapes." + figureChoiceBox.getValue());
+        currentShape = (Shape) cl.newInstance();
         shapesList.clear();
         final GraphicsContext gc = canvasDraw.getGraphicsContext2D();
         gc.clearRect(0, 0, 950, 655);
@@ -113,7 +103,7 @@ public class Controller implements Initializable {
         File[] files = new File(modulesPath).listFiles();
         if (files != null) {
             for (File file: files) {
-                if (file.isFile()) {
+                if (file.isFile() && !file.getName().contains("sig")) {
                     modules.add(file.getName().split(".class")[0]);
                 }
             }
@@ -127,9 +117,11 @@ public class Controller implements Initializable {
                 Class figureClass = Class.forName("shapes." + module);
                 if (figureClass.getSuperclass().equals(Shape.class)) {
                     try {
-                        loadedClasses.add(figureClass);
-                        validModules.add(module);
-                        loader.loadClass(module);
+                        Class clazz = loader.loadClass(module);
+                        if (clazz != null) {
+                            loadedClasses.add(figureClass);
+                            validModules.add(module);
+                        }
                     } catch (Exception e) {
                         System.out.println(module + " class is corrupted.");
                     }
@@ -142,7 +134,7 @@ public class Controller implements Initializable {
         }
 
         figureChoiceBox.setItems(FXCollections.observableArrayList(validModules));
-        if (modules.size() > 0) {
+        if (validModules.size() > 0) {
             figureChoiceBox.setValue(validModules.get(0));
         } else {
             figureChoiceBox.setValue("None");
@@ -200,7 +192,19 @@ public class Controller implements Initializable {
 
         drawingPanel.setOnMouseReleased(event -> {
             shapesList.add(currentShape);
-            currentShape = new Pencil();
+            Class cl = null;
+            try {
+                cl = Class.forName("shapes." + figureChoiceBox.getValue());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (cl != null) {
+                    currentShape = (Shape) cl.newInstance();
+                }
+            } catch (InstantiationException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         });
 
         drawingPanel.setOnMouseClicked(event -> {
@@ -280,7 +284,7 @@ public class Controller implements Initializable {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Own figures");
             alert.setHeaderText("How to add your own figures?");
-            alert.setContentText("1. Write your figure's java class.\n2. Compile it.\n3. Put the compiled class into the following directory:\n    /out/production/figures-drawer/shapes\n4. Restart Figures Drawer.");
+            alert.setContentText("1. Write your figure's java class.\n2. Compile it.\n3. Put the compiled class into the following directory:\n    /out/production/figures-drawer/shapes\n4. Encrypt the class using GenerateSignature.java.\n5. Paste generated public key into encryptionKey variable\n    in ModuleLoader.java (CheckSignature method).\n6. Restart Figures Drawer.");
             alert.show();
         });
 
