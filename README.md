@@ -1,2 +1,12 @@
-# figures-drawer
-An app for drawing figures like triangles, rectangles, circles, etc.
+# Figures Drawer
+
+## About
+Figures Drawer is an app for drawing simple pictures.
+
+## What can you do?
+* Use different colors and line widths.
+* Save the whole picture in XML for further use in Figures Drawer.
+* Create your own figures.
+
+<br>
+##### Figures Drawer uses encryption.
