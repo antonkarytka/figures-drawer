@@ -1,11 +1,12 @@
 package shapes;
 
 import asbtract.Shape;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import interfaces.Editable;
 import javafx.scene.canvas.*;
 import javafx.scene.paint.Color;
 
-
+@XStreamAlias("pencil")
 public class Pencil extends Shape implements Editable {
 
     public Pencil() {}

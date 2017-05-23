@@ -1,5 +1,8 @@
 package shapes;
 
+import com.thoughtworks.xstream.annotations.XStreamAlias;
+
+@XStreamAlias("point")
 public class Point {
 
     public int x, y;

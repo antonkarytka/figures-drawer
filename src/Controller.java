@@ -1,4 +1,6 @@
 import asbtract.Shape;
+import com.thoughtworks.xstream.converters.reflection.AbstractReflectionConverter;
+import com.thoughtworks.xstream.io.StreamException;
 import interfaces.Editable;
 import interfaces.Selectable;
 import secondary.XMLDeserializer;
@@ -18,8 +20,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -50,6 +55,14 @@ public class Controller implements Initializable {
     private void setLineWidth(Shape shape, int width) {
         Editable editedFigure = (Editable)shape;
         editedFigure.setLineWidth(width);
+    }
+
+    private static Class[] pushClass(Class[] array, Class push) {
+        Class[] longer = new Class[array.length + 1];
+        for (int i = 0; i < array.length; i++)
+            longer[i] = array[i];
+        longer[array.length] = push;
+        return longer;
     }
 
     @FXML
@@ -94,7 +107,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        String modulesPath = "/path/to/out/figures/folder/";
+        String modulesPath = "/home/anton/Programming/figures-drawer/out/production/figures-drawer/shapes/";
         ModuleLoader loader = new ModuleLoader(modulesPath, "shapes", ClassLoader.getSystemClassLoader());
         List<String> modules = new ArrayList<String>();
         File[] files = new File(modulesPath).listFiles();
@@ -106,17 +119,31 @@ public class Controller implements Initializable {
             }
         }
 
+        List<Class> loadedClasses = new ArrayList<>();
+        loadedClasses.add(XMLDeserializer.class);
+        List<String> validModules = new ArrayList<>();
         for (String module: modules) {
             try {
-                loader.loadClass(module);
+                Class figureClass = Class.forName("shapes." + module);
+                if (figureClass.getSuperclass().equals(Shape.class)) {
+                    try {
+                        loadedClasses.add(figureClass);
+                        validModules.add(module);
+                        loader.loadClass(module);
+                    } catch (Exception e) {
+                        System.out.println(module + " class is corrupted.");
+                    }
+                }
+            } catch (Error err) {
+                System.out.println(module + " class is corrupted.");
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                System.out.println(module + " class was not found.");
             }
         }
 
-        figureChoiceBox.setItems(FXCollections.observableArrayList(modules));
+        figureChoiceBox.setItems(FXCollections.observableArrayList(validModules));
         if (modules.size() > 0) {
-            figureChoiceBox.setValue(modules.get(0));
+            figureChoiceBox.setValue(validModules.get(0));
         } else {
             figureChoiceBox.setValue("None");
         }
@@ -129,7 +156,16 @@ public class Controller implements Initializable {
             }
         });
 
-        currentShape = new Pencil();
+        if (validModules.size() > 0) {
+            try {
+                Class<?> figureClass = Class.forName("shapes." + validModules.get(0));
+                Constructor<?> constructor = figureClass.getConstructor();
+                currentShape = (Shape) constructor.newInstance();
+            } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
         colorPicker.setValue(Color.BLACK);
         lineWidthChoice.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
         lineWidthChoice.setValue(5);
@@ -194,7 +230,7 @@ public class Controller implements Initializable {
 
             try {
                 XStream xstream = new XStream(new StaxDriver());
-                xstream.processAnnotations(new Class[]{XMLDeserializer.class, Pencil.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
+                xstream.autodetectAnnotations(true);
 
                 FileWriter fileWriter = new FileWriter(file);
                 fileWriter.write(xstream.toXML(shapesList));
@@ -209,19 +245,28 @@ public class Controller implements Initializable {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML file", "*.xml"));
             File file = fileChooser.showOpenDialog(null);
             if (file != null) {
+                Class[] loadedClassesArray = new Class[0];
+                loadedClassesArray = loadedClasses.toArray(loadedClassesArray);
+
                 XStream xstream = new XStream(new StaxDriver());
-                xstream.processAnnotations(new Class[]{XMLDeserializer.class, Pencil.class, Rectangle.class, Square.class, Triangle.class, Ellipse.class, Circle.class, Line.class});
+                xstream.processAnnotations(loadedClassesArray);
                 try {
                     XMLDeserializer deserializer = (XMLDeserializer) xstream.fromXML(file);
                     shapesList.addAll(deserializer.deserializedFigures);
                     for (Shape shape : shapesList) {
                         shape.draw(gc);
                     }
-                } catch (Exception e) {
+                } catch (AbstractReflectionConverter.UnknownFieldException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Oops...");
+                    alert.setHeaderText("Class is not loaded");
+                    alert.setContentText("Error occurred while opening XML file.\nFigure's class has not been loaded.");
+                    alert.show();
+                } catch (StreamException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Oops...");
                     alert.setHeaderText("Opened XML file is corrupted!");
-                    alert.setContentText("Error occurred while opening XML file. Probably it has been corrupted.");
+                    alert.setContentText("Error occurred while opening XML file.\nProbably, it has been corrupted.");
                     alert.show();
                 }
             }
@@ -235,7 +280,7 @@ public class Controller implements Initializable {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Own figures");
             alert.setHeaderText("How to add your own figures?");
-            alert.setContentText("1.Write your figure's java class.\n2. Compile it.\n3. Put the compiled class into the following directory:\n  '/out/production/figures-drawer/shapes'");
+            alert.setContentText("1. Write your figure's java class.\n2. Compile it.\n3. Put the compiled class into the following directory:\n    /out/production/figures-drawer/shapes\n4. Restart Figures Drawer.");
             alert.show();
         });
 
